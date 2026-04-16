@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profiel Optimizer - Kersten Tools</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#e2e8f0;--muted:#94a3b8;--accent:#3b82f6;--accent2:#2563eb;--green:#22c55e;--red:#ef4444;--orange:#f59e0b}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+.auth-gate{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.login-box{background:var(--card);border-radius:16px;padding:40px;max-width:400px;width:100%;text-align:center;box-shadow:0 25px 50px rgba(0,0,0,.4)}
+.login-box .logo{font-size:48px;margin-bottom:16px}
+.login-box h1{font-size:24px;margin-bottom:8px;color:#f8fafc}
+.login-box p{color:var(--muted);margin-bottom:24px;font-size:14px}
+.login-box input{width:100%;padding:14px 16px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--text);font-size:16px;outline:none}
+.login-box input:focus{border-color:var(--accent)}
+.login-box button{width:100%;padding:14px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-top:12px}
+.login-box button:hover{background:var(--accent2)}
+.login-error{color:var(--red);font-size:14px;margin-top:12px;display:none}
+
+.app{display:none;flex-direction:column;min-height:100vh}
+.top-bar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px}
+.back-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;text-decoration:none}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.top-bar h1{font-size:20px;font-weight:700;color:#f8fafc}
+
+.container{max-width:1400px;margin:0 auto;padding:20px;display:grid;grid-template-columns:400px 1fr;gap:20px;flex:1}
+@media(max-width:900px){.container{grid-template-columns:1fr}}
+
+.panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+.panel h2{font-size:16px;margin-bottom:16px;color:#f8fafc;display:flex;align-items:center;gap:8px}
+
+.form-row{display:flex;gap:8px;margin-bottom:8px;align-items:end}
+.form-group{display:flex;flex-direction:column;gap:4px;flex:1}
+.form-group label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.form-group input,.form-group select{padding:10px;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:14px;outline:none}
+.form-group input:focus{border-color:var(--accent)}
+
+.btn{padding:10px 16px;border-radius:8px;border:none;font-weight:600;font-size:13px;cursor:pointer}
+.btn-add{background:var(--accent);color:#fff}
+.btn-add:hover{background:var(--accent2)}
+.btn-calc{background:var(--green);color:#0f172a;width:100%;padding:14px;font-size:15px;margin-top:16px}
+.btn-calc:hover{background:#16a34a}
+.btn-clear{background:var(--border);color:var(--text);width:100%;padding:10px;margin-top:8px}
+.btn-remove{background:none;border:none;color:var(--red);cursor:pointer;font-size:18px;padding:4px 8px}
+
+.parts-list{margin:12px 0;max-height:300px;overflow-y:auto}
+.part-row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg);border-radius:6px;margin-bottom:4px;font-size:13px}
+.part-row .dims{font-weight:600;font-family:'Courier New',monospace}
+.part-row .qty{color:var(--muted)}
+.part-row .lbl{color:var(--accent);font-size:11px;margin-left:8px}
+
+.stock-section{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+
+.results{display:none}
+.results.show{display:block}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.stat{background:var(--bg);border-radius:8px;padding:14px;text-align:center}
+.stat .num{font-size:28px;font-weight:700;color:#f8fafc}
+.stat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;margin-top:4px}
+
+/* Bar visualization */
+.bar-vis{margin-bottom:12px;background:var(--bg);border-radius:8px;padding:16px}
+.bar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.bar-title{font-weight:700;font-size:14px}
+.bar-eff{font-size:13px;padding:4px 10px;border-radius:6px;font-weight:600}
+.eff-good{background:#14532d;color:var(--green)}
+.eff-mid{background:#422006;color:var(--orange)}
+.eff-low{background:#450a0a;color:var(--red)}
+
+.bar-draw{position:relative;height:48px;background:#0a0e1a;border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.bar-piece{position:absolute;top:2px;height:44px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 4px}
+.bar-waste{position:absolute;top:2px;height:44px;background:repeating-linear-gradient(45deg,#1e293b,#1e293b 4px,#0f172a 4px,#0f172a 8px);border-radius:3px;opacity:.5}
+.bar-cuts{margin-top:6px;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="auth-gate" id="authGate">
+  <div class="login-box">
+    <div class="logo">📏</div>
+    <h1>Profiel Optimizer</h1>
+    <p>Kersten Tools — voer het wachtwoord in</p>
+    <form id="loginForm">
+      <input type="password" id="passwordInput" placeholder="Wachtwoord" autocomplete="off" autofocus>
+      <button type="submit">Inloggen</button>
+    </form>
+    <div class="login-error" id="loginError">Verkeerd wachtwoord</div>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <div class="top-bar">
+    <a href="../" class="back-btn">← Terug</a>
+    <h1>📏 Profiel Optimizer</h1>
+  </div>
+
+  <div class="container">
+    <div>
+      <div class="panel">
+        <h2>📦 Stukken</h2>
+        <div class="form-row">
+          <div class="form-group"><label>Lengte (mm)</label><input type="number" id="cutL" min="1" placeholder="bijv. 2500"></div>
+          <div class="form-group" style="max-width:70px"><label>Aantal</label><input type="number" id="cutQ" min="1" value="1"></div>
+          <div class="form-group"><label>Label (optioneel)</label><input type="text" id="cutLabel" placeholder="bijv. regel A1"></div>
+          <button class="btn btn-add" onclick="addCut()">+</button>
+        </div>
+        <div class="parts-list" id="cutsList"></div>
+
+        <div class="stock-section">
+          <h2>📏 Standaard lengte</h2>
+          <div class="form-row">
+            <div class="form-group"><label>Profiellengte (mm)</label><input type="number" id="stockLen" value="6000"></div>
+            <div class="form-group"><label>Zaagsnede (mm)</label><input type="number" id="kerf" value="3" min="0" step="0.5"></div>
+          </div>
+          <div class="form-group" style="margin-top:8px">
+            <label>Profiel omschrijving (optioneel)</label>
+            <input type="text" id="profileDesc" placeholder="bijv. HEA 200, koker 100x100x5">
+          </div>
+        </div>
+
+        <button class="btn btn-calc" onclick="calculate()">🔧 Bereken zaaglijst</button>
+        <button class="btn btn-clear" onclick="clearAll()">Alles wissen</button>
+      </div>
+    </div>
+
+    <div class="results" id="results">
+      <div class="panel">
+        <h2>📊 Resultaat</h2>
+        <div id="profileLabel" style="color:var(--accent);font-weight:600;margin-bottom:12px;display:none"></div>
+        <div class="summary" id="summary"></div>
+        <div id="barsVis"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Auth
+const HASH='a6efe2e673f8187330d20181cc8ce1bb3f3aacba656b27dc4e6ac8aef0577f50';
+async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+(async()=>{if(localStorage.getItem('kersten_auth')===HASH)show()})();
+document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();const x=await h(document.getElementById('passwordInput').value);if(x===HASH){localStorage.setItem('kersten_auth',HASH);show()}else{const er=document.getElementById('loginError');er.style.display='block';document.getElementById('passwordInput').value='';setTimeout(()=>er.style.display='none',2000)}});
+function show(){document.getElementById('authGate').style.display='none';document.getElementById('app').style.display='flex'}
+
+let cuts = [];
+
+function addCut() {
+  const l = parseInt(document.getElementById('cutL').value);
+  const q = parseInt(document.getElementById('cutQ').value) || 1;
+  const label = document.getElementById('cutLabel').value.trim();
+  if (!l || l < 1) return alert('Vul een lengte in');
+  cuts.push({ l, qty: q, label });
+  document.getElementById('cutL').value = '';
+  document.getElementById('cutQ').value = '1';
+  document.getElementById('cutLabel').value = '';
+  document.getElementById('cutL').focus();
+  renderCuts();
+}
+
+document.getElementById('cutL').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('cutQ').focus(); }});
+document.getElementById('cutQ').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addCut(); }});
+document.getElementById('cutLabel').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addCut(); }});
+
+function removeCut(i) { cuts.splice(i, 1); renderCuts(); }
+
+function renderCuts() {
+  const el = document.getElementById('cutsList');
+  if (!cuts.length) { el.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:12px;text-align:center">Nog geen stukken toegevoegd</div>'; return; }
+  el.innerHTML = cuts.map((c, i) => `
+    <div class="part-row">
+      <span class="dims">${c.l} mm</span>
+      <span class="qty">×${c.qty}</span>
+      ${c.label ? `<span class="lbl">${c.label}</span>` : ''}
+      <button class="btn-remove" onclick="removeCut(${i})">×</button>
+    </div>`).join('');
+}
+renderCuts();
+
+function clearAll() { cuts = []; renderCuts(); document.getElementById('results').classList.remove('show'); }
+
+// ═══════════════ 1D BIN PACKING (First Fit Decreasing) ═══════════════
+function calculate() {
+  if (!cuts.length) return alert('Voeg eerst stukken toe');
+
+  const stockLen = parseInt(document.getElementById('stockLen').value);
+  const kerf = parseFloat(document.getElementById('kerf').value) || 0;
+  const desc = document.getElementById('profileDesc').value.trim();
+
+  // Expand cuts
+  let allCuts = [];
+  for (const c of cuts) {
+    for (let i = 0; i < c.qty; i++) {
+      allCuts.push({ l: c.l, label: c.label || `${c.l}mm`, idx: allCuts.length });
+    }
+  }
+
+  // Check for oversized
+  const oversized = allCuts.filter(c => c.l > stockLen);
+  if (oversized.length) {
+    alert(`${oversized.length} stuk(ken) zijn langer dan de standaard lengte (${stockLen}mm)!`);
+    return;
+  }
+
+  // Sort descending (FFD)
+  allCuts.sort((a, b) => b.l - a.l);
+
+  // Bins
+  const bars = []; // each: { remaining, pieces: [] }
+
+  for (const cut of allCuts) {
+    let placed = false;
+    // Find first bar that fits
+    for (const bar of bars) {
+      if (bar.remaining >= cut.l) {
+        bar.pieces.push(cut);
+        bar.remaining -= (cut.l + kerf);
+        placed = true;
+        break;
+      }
+    }
+    if (!placed) {
+      const bar = { remaining: stockLen - cut.l - kerf, pieces: [cut] };
+      bars.push(bar);
+    }
+  }
+
+  // Display
+  const totalCutLen = allCuts.reduce((s, c) => s + c.l, 0);
+  const totalBarLen = bars.length * stockLen;
+  const waste = totalBarLen - totalCutLen - (allCuts.length * kerf);
+  const eff = (totalCutLen / totalBarLen * 100);
+
+  const labelEl = document.getElementById('profileLabel');
+  if (desc) { labelEl.textContent = desc; labelEl.style.display = 'block'; }
+  else { labelEl.style.display = 'none'; }
+
+  document.getElementById('summary').innerHTML = `
+    <div class="stat"><div class="num">${bars.length}</div><div class="lbl">Profielen nodig</div></div>
+    <div class="stat"><div class="num">${allCuts.length}</div><div class="lbl">Stukken</div></div>
+    <div class="stat"><div class="num">${eff.toFixed(1)}%</div><div class="lbl">Benutting</div></div>
+    <div class="stat"><div class="num">${(waste / 1000).toFixed(2)}</div><div class="lbl">Restmateriaal (m)</div></div>
+  `;
+
+  const colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#a855f7','#ec4899','#06b6d4','#84cc16','#f97316','#6366f1'];
+  const uniqueLengths = [...new Set(allCuts.map(c => c.l))];
+  const colorMap = {};
+  uniqueLengths.forEach((l, i) => colorMap[l] = colors[i % colors.length]);
+
+  const visEl = document.getElementById('barsVis');
+  visEl.innerHTML = '';
+
+  for (let bi = 0; bi < bars.length; bi++) {
+    const bar = bars[bi];
+    const usedLen = bar.pieces.reduce((s, p) => s + p.l, 0);
+    const barEff = (usedLen / stockLen * 100);
+    const effClass = barEff >= 70 ? 'eff-good' : barEff >= 40 ? 'eff-mid' : 'eff-low';
+    const wasteLen = stockLen - usedLen - (bar.pieces.length * kerf);
+
+    const div = document.createElement('div');
+    div.className = 'bar-vis';
+
+    let piecesHtml = '';
+    let pos = 0;
+    for (let pi = 0; pi < bar.pieces.length; pi++) {
+      const p = bar.pieces[pi];
+      const left = (pos / stockLen * 100);
+      const width = (p.l / stockLen * 100);
+      const color = colorMap[p.l];
+      piecesHtml += `<div class="bar-piece" style="left:${left}%;width:${width}%;background:${color}80;border:1px solid ${color}">${p.l}</div>`;
+      pos += p.l + kerf;
+    }
+
+    // Waste area
+    if (wasteLen > 0) {
+      const left = (pos / stockLen * 100);
+      const width = (wasteLen / stockLen * 100);
+      piecesHtml += `<div class="bar-waste" style="left:${left}%;width:${width}%"></div>`;
+    }
+
+    div.innerHTML = `
+      <div class="bar-header">
+        <span class="bar-title">Profiel ${bi + 1}</span>
+        <span class="bar-eff ${effClass}">${barEff.toFixed(1)}% — rest ${wasteLen}mm</span>
+      </div>
+      <div class="bar-draw">${piecesHtml}</div>
+      <div class="bar-cuts">${bar.pieces.map(p => `<span>${p.label}</span>`).join(' · ')}</div>
+    `;
+    visEl.appendChild(div);
+  }
+
+  document.getElementById('results').classList.add('show');
+}
+</script>
+</body>
+</html>

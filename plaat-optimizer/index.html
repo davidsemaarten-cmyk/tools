@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plaat Optimizer - Kersten Tools</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#e2e8f0;--muted:#94a3b8;--accent:#3b82f6;--accent2:#2563eb;--green:#22c55e;--red:#ef4444;--orange:#f59e0b}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* Auth */
+.auth-gate{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.login-box{background:var(--card);border-radius:16px;padding:40px;max-width:400px;width:100%;text-align:center;box-shadow:0 25px 50px rgba(0,0,0,.4)}
+.login-box .logo{font-size:48px;margin-bottom:16px}
+.login-box h1{font-size:24px;margin-bottom:8px;color:#f8fafc}
+.login-box p{color:var(--muted);margin-bottom:24px;font-size:14px}
+.login-box input{width:100%;padding:14px 16px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--text);font-size:16px;outline:none}
+.login-box input:focus{border-color:var(--accent)}
+.login-box button{width:100%;padding:14px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-top:12px}
+.login-box button:hover{background:var(--accent2)}
+.login-error{color:var(--red);font-size:14px;margin-top:12px;display:none}
+
+.app{display:none;flex-direction:column;min-height:100vh}
+.top-bar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px}
+.back-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;text-decoration:none}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.top-bar h1{font-size:20px;font-weight:700;color:#f8fafc}
+
+.container{max-width:1400px;margin:0 auto;padding:20px;display:grid;grid-template-columns:400px 1fr;gap:20px;flex:1}
+@media(max-width:900px){.container{grid-template-columns:1fr}}
+
+/* Panels */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+.panel h2{font-size:16px;margin-bottom:16px;color:#f8fafc;display:flex;align-items:center;gap:8px}
+
+/* Form */
+.form-row{display:flex;gap:8px;margin-bottom:8px;align-items:end}
+.form-group{display:flex;flex-direction:column;gap:4px;flex:1}
+.form-group label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.form-group input,.form-group select{padding:10px;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:14px;outline:none}
+.form-group input:focus,.form-group select:focus{border-color:var(--accent)}
+
+.btn{padding:10px 16px;border-radius:8px;border:none;font-weight:600;font-size:13px;cursor:pointer;transition:.15s}
+.btn-add{background:var(--accent);color:#fff}
+.btn-add:hover{background:var(--accent2)}
+.btn-calc{background:var(--green);color:#0f172a;width:100%;padding:14px;font-size:15px;margin-top:16px}
+.btn-calc:hover{background:#16a34a}
+.btn-clear{background:var(--border);color:var(--text);width:100%;padding:10px;margin-top:8px}
+.btn-remove{background:none;border:none;color:var(--red);cursor:pointer;font-size:18px;padding:4px 8px}
+
+/* Parts list */
+.parts-list{margin:12px 0;max-height:300px;overflow-y:auto}
+.part-row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg);border-radius:6px;margin-bottom:4px;font-size:13px}
+.part-row .dims{font-weight:600;font-family:'Courier New',monospace}
+.part-row .qty{color:var(--muted)}
+
+/* Stock config */
+.stock-section{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* Results */
+.results{display:none}
+.results.show{display:block}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.stat{background:var(--bg);border-radius:8px;padding:14px;text-align:center}
+.stat .num{font-size:28px;font-weight:700;color:#f8fafc}
+.stat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;margin-top:4px}
+
+/* Sheet visualization */
+.sheet-vis{margin-bottom:16px;background:var(--bg);border-radius:8px;padding:16px}
+.sheet-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sheet-title{font-weight:700;font-size:14px}
+.sheet-eff{font-size:13px;padding:4px 10px;border-radius:6px;font-weight:600}
+.eff-good{background:#14532d;color:var(--green)}
+.eff-mid{background:#422006;color:var(--orange)}
+.eff-low{background:#450a0a;color:var(--red)}
+
+.sheet-canvas-wrap{position:relative;width:100%;background:#0a0e1a;border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.sheet-canvas-wrap canvas{width:100%;display:block}
+
+.sheet-parts{margin-top:8px;font-size:12px;color:var(--muted)}
+.sheet-parts span{display:inline-block;margin-right:12px}
+
+/* Colors for parts */
+.c0{background:#3b82f6}.c1{background:#22c55e}.c2{background:#f59e0b}.c3{background:#ef4444}
+.c4{background:#a855f7}.c5{background:#ec4899}.c6{background:#06b6d4}.c7{background:#84cc16}
+.c8{background:#f97316}.c9{background:#6366f1}
+</style>
+</head>
+<body>
+
+<div class="auth-gate" id="authGate">
+  <div class="login-box">
+    <div class="logo">📐</div>
+    <h1>Plaat Optimizer</h1>
+    <p>Kersten Tools — voer het wachtwoord in</p>
+    <form id="loginForm">
+      <input type="password" id="passwordInput" placeholder="Wachtwoord" autocomplete="off" autofocus>
+      <button type="submit">Inloggen</button>
+    </form>
+    <div class="login-error" id="loginError">Verkeerd wachtwoord</div>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <div class="top-bar">
+    <a href="../" class="back-btn">← Terug</a>
+    <h1>📐 Plaat Optimizer</h1>
+  </div>
+
+  <div class="container">
+    <div>
+      <!-- Input panel -->
+      <div class="panel">
+        <h2>📦 Onderdelen</h2>
+        <div class="form-row">
+          <div class="form-group"><label>Lengte (mm)</label><input type="number" id="partL" min="1" placeholder="bijv. 500"></div>
+          <div class="form-group"><label>Breedte (mm)</label><input type="number" id="partW" min="1" placeholder="bijv. 300"></div>
+          <div class="form-group" style="max-width:70px"><label>Aantal</label><input type="number" id="partQ" min="1" value="1"></div>
+          <button class="btn btn-add" onclick="addPart()" title="Toevoegen">+</button>
+        </div>
+        <div class="parts-list" id="partsList"></div>
+
+        <div class="stock-section">
+          <h2>📏 Plaatformaat</h2>
+          <div class="form-row">
+            <div class="form-group"><label>Lengte (mm)</label><input type="number" id="stockL" value="6000"></div>
+            <div class="form-group"><label>Breedte (mm)</label><input type="number" id="stockW" value="2000"></div>
+          </div>
+          <div class="form-row" style="margin-top:8px">
+            <div class="form-group"><label>Zaagsnede (mm)</label><input type="number" id="kerf" value="3" min="0" step="0.5"></div>
+            <div class="form-group">
+              <label>Draaien toestaan</label>
+              <select id="allowRotate"><option value="1">Ja</option><option value="0">Nee</option></select>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-calc" onclick="calculate()">🔧 Bereken nesting</button>
+        <button class="btn btn-clear" onclick="clearAll()">Alles wissen</button>
+      </div>
+    </div>
+
+    <!-- Results panel -->
+    <div class="results" id="results">
+      <div class="panel">
+        <h2>📊 Resultaat</h2>
+        <div class="summary" id="summary"></div>
+        <div id="sheetsVis"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Auth
+const HASH='a6efe2e673f8187330d20181cc8ce1bb3f3aacba656b27dc4e6ac8aef0577f50';
+async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+(async()=>{if(localStorage.getItem('kersten_auth')===HASH)show()})();
+document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();const x=await h(document.getElementById('passwordInput').value);if(x===HASH){localStorage.setItem('kersten_auth',HASH);show()}else{const er=document.getElementById('loginError');er.style.display='block';document.getElementById('passwordInput').value='';setTimeout(()=>er.style.display='none',2000)}});
+function show(){document.getElementById('authGate').style.display='none';document.getElementById('app').style.display='flex'}
+
+// Parts data
+let parts = [];
+
+function addPart() {
+  const l = parseInt(document.getElementById('partL').value);
+  const w = parseInt(document.getElementById('partW').value);
+  const q = parseInt(document.getElementById('partQ').value) || 1;
+  if (!l || !w || l < 1 || w < 1) return alert('Vul lengte en breedte in');
+  parts.push({ l, w, qty: q });
+  document.getElementById('partL').value = '';
+  document.getElementById('partW').value = '';
+  document.getElementById('partQ').value = '1';
+  document.getElementById('partL').focus();
+  renderParts();
+}
+
+// Allow Enter key to add part
+document.getElementById('partQ').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addPart(); }});
+document.getElementById('partW').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addPart(); }});
+document.getElementById('partL').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('partW').focus(); }});
+
+function removePart(i) { parts.splice(i, 1); renderParts(); }
+
+function renderParts() {
+  const el = document.getElementById('partsList');
+  if (!parts.length) { el.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:12px;text-align:center">Nog geen onderdelen toegevoegd</div>'; return; }
+  el.innerHTML = parts.map((p, i) => `
+    <div class="part-row">
+      <span class="dims">${p.l} × ${p.w} mm</span>
+      <span class="qty">×${p.qty}</span>
+      <button class="btn-remove" onclick="removePart(${i})">×</button>
+    </div>`).join('');
+}
+renderParts();
+
+function clearAll() {
+  parts = [];
+  renderParts();
+  document.getElementById('results').classList.remove('show');
+}
+
+// ═══════════════ NESTING ENGINE ═══════════════
+function calculate() {
+  if (!parts.length) return alert('Voeg eerst onderdelen toe');
+
+  const stockL = parseInt(document.getElementById('stockL').value);
+  const stockW = parseInt(document.getElementById('stockW').value);
+  const kerf = parseFloat(document.getElementById('kerf').value) || 0;
+  const allowRotate = document.getElementById('allowRotate').value === '1';
+
+  // Expand parts
+  let allParts = [];
+  for (const p of parts) {
+    for (let i = 0; i < p.qty; i++) {
+      allParts.push({ l: p.l, w: p.w, id: `${p.l}×${p.w}` });
+    }
+  }
+  // Sort by area descending
+  allParts.sort((a, b) => (b.l * b.w) - (a.l * a.w));
+
+  // Maximal Rectangles bin packing
+  class Sheet {
+    constructor() {
+      this.freeRects = [{ x: 0, y: 0, l: stockL, w: stockW }];
+      this.placed = [];
+    }
+    tryPlace(pL, pW) {
+      let best = null, bestShort = Infinity, bestRot = false;
+      for (const r of this.freeRects) {
+        if (pL + kerf <= r.l && pW + kerf <= r.w) {
+          const s = Math.min(r.l - pL, r.w - pW);
+          if (s < bestShort) { bestShort = s; best = r; bestRot = false; }
+        }
+        if (allowRotate && pW + kerf <= r.l && pL + kerf <= r.w) {
+          const s = Math.min(r.l - pW, r.w - pL);
+          if (s < bestShort) { bestShort = s; best = r; bestRot = true; }
+        }
+      }
+      if (!best) return false;
+      const pl = bestRot ? pW : pL, pw = bestRot ? pL : pW;
+      this.placed.push({ x: best.x, y: best.y, l: pl, w: pw, origL: pL, origW: pW, rotated: bestRot });
+      this.split(best, pl + kerf, pw + kerf);
+      return true;
+    }
+    split(rect, uL, uW) {
+      const i = this.freeRects.indexOf(rect);
+      this.freeRects.splice(i, 1);
+      if (rect.l - uL > kerf) this.freeRects.push({ x: rect.x + uL, y: rect.y, l: rect.l - uL, w: rect.w });
+      if (rect.w - uW > kerf) this.freeRects.push({ x: rect.x, y: rect.y + uW, l: uL, w: rect.w - uW });
+    }
+    usedArea() { return this.placed.reduce((s, p) => s + p.l * p.w, 0); }
+    eff() { return (this.usedArea() / (stockL * stockW) * 100); }
+  }
+
+  const sheets = [];
+  const unplaced = [];
+
+  for (const part of allParts) {
+    let placed = false;
+    for (const sh of sheets) {
+      if (sh.tryPlace(part.l, part.w)) { placed = true; break; }
+    }
+    if (!placed) {
+      const sh = new Sheet();
+      if (sh.tryPlace(part.l, part.w)) { sheets.push(sh); placed = true; }
+    }
+    if (!placed) unplaced.push(part);
+  }
+
+  // Display results
+  const totalPartArea = allParts.reduce((s, p) => s + p.l * p.w, 0);
+  const totalSheetArea = sheets.length * stockL * stockW;
+  const avgEff = totalSheetArea > 0 ? (totalPartArea / totalSheetArea * 100) : 0;
+
+  document.getElementById('summary').innerHTML = `
+    <div class="stat"><div class="num">${sheets.length}</div><div class="lbl">Platen nodig</div></div>
+    <div class="stat"><div class="num">${allParts.length}</div><div class="lbl">Onderdelen</div></div>
+    <div class="stat"><div class="num">${avgEff.toFixed(1)}%</div><div class="lbl">Gem. benutting</div></div>
+    <div class="stat"><div class="num">${((totalSheetArea - totalPartArea) / 1e6).toFixed(2)}</div><div class="lbl">Restmateriaal (m²)</div></div>
+    ${unplaced.length ? `<div class="stat" style="border:2px solid var(--red)"><div class="num" style="color:var(--red)">${unplaced.length}</div><div class="lbl">Passen niet!</div></div>` : ''}
+  `;
+
+  // Draw sheets
+  const visEl = document.getElementById('sheetsVis');
+  visEl.innerHTML = '';
+
+  const colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#a855f7','#ec4899','#06b6d4','#84cc16','#f97316','#6366f1'];
+
+  // Build a color map per unique part size
+  const uniqueParts = [...new Set(allParts.map(p => p.id))];
+  const colorMap = {};
+  uniqueParts.forEach((id, i) => colorMap[id] = colors[i % colors.length]);
+
+  for (let si = 0; si < sheets.length; si++) {
+    const sh = sheets[si];
+    const eff = sh.eff();
+    const effClass = eff >= 70 ? 'eff-good' : eff >= 40 ? 'eff-mid' : 'eff-low';
+
+    const div = document.createElement('div');
+    div.className = 'sheet-vis';
+
+    const maxWidth = 800;
+    const scale = Math.min(maxWidth / stockL, 400 / stockW);
+    const cw = Math.round(stockL * scale);
+    const ch = Math.round(stockW * scale);
+
+    div.innerHTML = `
+      <div class="sheet-header">
+        <span class="sheet-title">Plaat ${si + 1} — ${stockL}×${stockW} mm</span>
+        <span class="sheet-eff ${effClass}">${eff.toFixed(1)}%</span>
+      </div>
+      <div class="sheet-canvas-wrap"><canvas width="${cw}" height="${ch}"></canvas></div>
+      <div class="sheet-parts">${sh.placed.map(p => `<span>${p.origL}×${p.origW}${p.rotated ? ' ↻' : ''}</span>`).join('')}</div>
+    `;
+    visEl.appendChild(div);
+
+    const canvas = div.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Background
+    ctx.fillStyle = '#0a0e1a';
+    ctx.fillRect(0, 0, cw, ch);
+
+    // Draw placed parts
+    for (let pi = 0; pi < sh.placed.length; pi++) {
+      const p = sh.placed[pi];
+      const x = p.x * scale, y = p.y * scale;
+      const w = p.l * scale, h = p.w * scale;
+      const color = colorMap[`${p.origL}×${p.origW}`] || colors[pi % colors.length];
+
+      ctx.fillStyle = color + '40';
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
+
+      // Label
+      if (w > 40 && h > 20) {
+        ctx.fillStyle = '#fff';
+        ctx.font = `${Math.min(12, Math.max(8, h * 0.3))}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const txt = `${p.origL}×${p.origW}`;
+        ctx.fillText(txt, x + w / 2, y + h / 2);
+      }
+    }
+
+    // Border
+    ctx.strokeStyle = '#475569';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(0, 0, cw, ch);
+  }
+
+  document.getElementById('results').classList.add('show');
+}
+</script>
+</body>
+</html>
