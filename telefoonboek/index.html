@@ -149,6 +149,14 @@
         }
         .manage-categories-btn:hover { background: var(--accent); color: white; }
 
+        .data-btn {
+            padding: 10px 16px; border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary); color: var(--text-secondary);
+            font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap;
+        }
+        .data-btn:hover { border-color: var(--accent); color: var(--accent); }
+
         .category-badge {
             display: inline-block; padding: 3px 8px; border-radius: 10px;
             font-size: 10px; font-weight: 600; text-transform: uppercase;
@@ -317,6 +325,9 @@
                 <option value="all">Alle categorieën</option>
             </select>
             <button class="manage-categories-btn" id="manageCategoriesBtn">⚙️ Categorieën</button>
+            <button class="data-btn" id="exportDataBtn" title="Exporteer alle data als JSON">📥 Export</button>
+            <button class="data-btn" id="importDataBtn" title="Importeer data uit JSON bestand">📤 Import</button>
+            <input type="file" id="importFileInput" accept=".json" style="display:none">
         </div>
         <div class="suppliers-grid" id="suppliersGrid"></div>
     </main>
@@ -546,6 +557,11 @@
         document.getElementById('categoriesForm').addEventListener('submit', handleCategoriesSubmit);
         document.getElementById('addCategory').addEventListener('click', () => addCategoryRow());
 
+        // Export / Import
+        document.getElementById('exportDataBtn').addEventListener('click', exportData);
+        document.getElementById('importDataBtn').addEventListener('click', () => document.getElementById('importFileInput').click());
+        document.getElementById('importFileInput').addEventListener('change', importData);
+
         document.querySelectorAll('.color-option').forEach(o => o.addEventListener('click', () => {
             document.querySelectorAll('.color-option').forEach(x => x.classList.remove('selected'));
             o.classList.add('selected'); selectedColor = o.dataset.color;
@@ -658,6 +674,40 @@
             suppliers = suppliers.filter(s=>s.id!==currentEditId);
             saveSuppliers(); renderCategoryFilter(); renderSuppliers(); setupSortable(); closeModal();
         }
+    }
+
+    // Export all data as JSON
+    function exportData() {
+        const data = { suppliers, categories, exportDate: new Date().toISOString() };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'telefoonboek-backup.json';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 3000);
+    }
+
+    // Import data from JSON
+    function importData(e) {
+        const file = e.target.files[0]; if (!file) return;
+        e.target.value = '';
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                const data = JSON.parse(ev.target.result);
+                if (!data.suppliers || !Array.isArray(data.suppliers)) {
+                    alert('Ongeldig bestand — geen leveranciers gevonden.'); return;
+                }
+                const count = data.suppliers.length;
+                if (!confirm(`${count} leverancier(s) importeren? Dit vervangt alle huidige data.`)) return;
+                suppliers = data.suppliers;
+                if (data.categories) categories = data.categories;
+                saveSuppliers(); saveCategories();
+                renderCategoryFilter(); renderSuppliers(); setupSortable();
+                alert(`${count} leverancier(s) geïmporteerd!`);
+            } catch (err) { alert('Kon bestand niet lezen: ' + err.message); }
+        };
+        reader.readAsText(file);
     }
 </script>
 </body>
