@@ -439,19 +439,64 @@
 
     // ============ DATA ============
     const initialSuppliers = [
-        { id:'waayenberg', name:'Waayenberg Coatings', color:'#003D7A', category:'overig',
+        { id:'waayenberg', name:'Waayenberg Coatings', color:'#003D7A', category:'conserveren',
           contacts:[{label:'Algemeen',value:'0342 450 125'},{label:'Maarten',value:'06 464 718 87'}]},
-        { id:'scheuter', name:'Scheuter Barneveld', color:'#00A3DD', category:'overig',
+        { id:'scheuter', name:'Scheuter Barneveld', color:'#00A3DD', category:'snijden/kanten',
           contacts:[{label:'Telefoon',value:'0342 414 861'}]},
-        { id:'coatinc', name:'Coatinc', color:'#FF8C00', category:'overig',
-          contacts:[{label:'Algemeen',value:'078 699 22 83'},{label:'Rob Bijpost',value:'06 283 881 93'},
+        { id:'coatinc', name:'Coatinc', color:'#FF8C00', category:'conserveren',
+          contacts:[{label:'Algemeen',value:'034 241 9910'},{label:'Rob Bijpost',value:'06 283 881 93'},
                     {label:'Dick Hop',value:'06 150 075 44'},{label:'Robert Jan Vos',value:'06 215 063 14'}]},
-        { id:'arcelormittal', name:'Arcelor Mittal', color:'#FF7A3D', category:'overig',
+        { id:'arcelormittal', name:'Arcelor Mittal', color:'#FF7A3D', category:'plaat/profiel leverancier',
           contacts:[{label:'Ted Witte',value:'072 567 20 31'}]},
-        { id:'vandaglas', name:'Vandaglas', color:'#475569', category:'overig',
-          contacts:[{label:'Algemeen',value:'020 613 25 51'},{label:'Sander Straver',value:'06 571 331 86'}]},
-        { id:'meulendijks', name:'Meulendijks', color:'#EA7139', category:'overig',
-          contacts:[{label:'Algemeen',value:'0492 524 390'}]}
+        { id:'meulendijks', name:'Meulendijks', color:'#EA7139', category:'conserveren',
+          contacts:[{label:'Algemeen',value:'0492 524 390'}]},
+        { id:'vandaglas', name:'Vandaglas', color:'#475569', category:'glas',
+          contacts:[{label:'Algemeen',value:'020 613 25 51'},{label:'Sander Straver',value:'06 571 331 86'},
+                    {label:'Jeff',value:'06 215 756 14'},{label:'Jelle Twerda',value:'06 230 062 51'}]},
+        { id:'slorid', name:'SLO-RID', color:'#a855f7', category:'draaien/frezen',
+          contacts:[{label:'Algemeen',value:'020 631 75 94'}]},
+        { id:'wurth', name:'Wurth', color:'#ef4444', category:'bevestigingsmiddelen',
+          contacts:[{label:'Shop Haven',value:'020 337 1005'}]},
+        { id:'kyocera', name:'Kyocera', color:'#ef4444', category:'bevestigingsmiddelen',
+          contacts:[{label:'Algemeen',value:'040 24 92 401'}]},
+        { id:'mcb', name:'MCB', color:'#3b82f6', category:'plaat/profiel leverancier',
+          contacts:[{label:'Twan de Louw',value:'040 20 88 192'}]},
+        { id:'douma', name:'Douma', color:'#3b82f6', category:'plaat/profiel leverancier',
+          contacts:[{label:'Jappie Duiker',value:'0515 226 403'},{label:'Harmen de Jong',value:'06 13 42 44 88'}]},
+        { id:'gruter', name:'Gruter', color:'#475569', category:'overig',
+          contacts:[{label:'Algemeen',value:'020 494 1250'}]},
+        { id:'pyroguard', name:'Pyroguard', color:'#22c55e', category:'glas',
+          contacts:[{label:'Mark Van Tilborg (project director)',value:'06 15 51 19 47'},{label:'Algemeen',value:'040 288 85 25'}]},
+        { id:'staco', name:'STACO', color:'#475569', category:'overig',
+          contacts:[{label:'Algemeen',value:'077 474 29 29'}]},
+        { id:'dorma', name:'Dorma', color:'#ef4444', category:'bevestigingsmiddelen',
+          contacts:[{label:'Jelle Jongkind',value:'06 83 58 65 38'}]},
+        { id:'bosmanvanzaal', name:'Bosman van Zaal', color:'#00A3DD', category:'snijden/kanten',
+          contacts:[{label:'Roy de Graaf',value:'06 23 95 13 39'},{label:'Johan van der Meer',value:'06 13 45 86 43'}]},
+        { id:'vanleeuwen', name:'Van Leeuwen Buizen', color:'#3b82f6', category:'plaat/profiel leverancier',
+          contacts:[{label:'Chris Taekema',value:'078 62 52 620'}]},
+        { id:'isero', name:'Isero', color:'#ef4444', category:'bevestigingsmiddelen',
+          contacts:[{label:'NDSM',value:'020 723 3632'}]},
+        { id:'bossard', name:'Bossard', color:'#ef4444', category:'bevestigingsmiddelen',
+          contacts:[{label:'Edgar Griffioen',value:'036 303 2000'}]},
+        { id:'carlstahl', name:'Carl Stahl', color:'#475569', category:'overig',
+          contacts:[{label:'Tim',value:'075 303 0392'}]},
+        { id:'klaassen', name:'Klaassen', color:'#22c55e', category:'overig',
+          contacts:[{label:'Joost ten Heggeler',value:'06 34 633 383'},{label:'Pjotr',value:'06 83 139 141'},
+                    {label:'Dennis Walmink',value:'06 308 23302'}]},
+        { id:'staalmeesters', name:'Staalmeesters', color:'#475569', category:'overig',
+          contacts:[{label:'Algemeen',value:'0478 532050'}]},
+        { id:'bbtec', name:'BBTEC', color:'#ef4444', category:'bevestigingsmiddelen',
+          contacts:[{label:'Arie Kranendonk',value:'06 53 77 37 86'}]},
+        { id:'tuwi', name:'Tuwi', color:'#475569', category:'overig',
+          contacts:[{label:'Service',value:'+31 (0) 543-549 549'}]},
+        { id:'martinic', name:'Martinic', color:'#475569', category:'overig',
+          contacts:[{label:'Algemeen',value:'0224 - 218 470'}]}
+    ];
+
+    const defaultCategories = [
+        {name:'overig'},{name:'conserveren'},{name:'snijden/kanten'},{name:'plaat/profiel leverancier'},
+        {name:'bevestigingsmiddelen'},{name:'draaien/frezen'},{name:'glas'}
     ];
 
     let suppliers = [], categories = [], currentEditId = null, selectedColor = '#3b82f6';
@@ -465,17 +510,27 @@
 
     function loadCategories() {
         const s = localStorage.getItem('telefoonboek_categories');
-        categories = s ? JSON.parse(s) : [{name:'overig'}];
+        categories = s ? JSON.parse(s) : defaultCategories;
         if (!s) saveCategories();
     }
     function saveCategories() { localStorage.setItem('telefoonboek_categories', JSON.stringify(categories)); }
 
+    const DATA_VERSION = 2; // bump to force reload initial data
     function loadSuppliers() {
+        const ver = localStorage.getItem('telefoonboek_version');
         const s = localStorage.getItem('telefoonboek_suppliers');
-        if (s) { suppliers = JSON.parse(s).map(x => ({...x, category: x.category||'overig'})); }
-        else { suppliers = initialSuppliers; saveSuppliers(); }
+        if (s && ver && parseInt(ver) >= DATA_VERSION) {
+            suppliers = JSON.parse(s).map(x => ({...x, category: x.category||'overig'}));
+        } else {
+            suppliers = initialSuppliers;
+            saveSuppliers();
+            localStorage.setItem('telefoonboek_version', DATA_VERSION);
+        }
     }
-    function saveSuppliers() { localStorage.setItem('telefoonboek_suppliers', JSON.stringify(suppliers)); }
+    function saveSuppliers() {
+        localStorage.setItem('telefoonboek_suppliers', JSON.stringify(suppliers));
+        localStorage.setItem('telefoonboek_version', DATA_VERSION);
+    }
 
     function getFiltered() {
         let f = [...suppliers];
