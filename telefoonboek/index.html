@@ -499,7 +499,7 @@
         {name:'bevestigingsmiddelen'},{name:'draaien/frezen'},{name:'glas'}
     ];
 
-    const DATA_VERSION = 2;
+    const DATA_VERSION = 3; // bumped to force reload for users with broken/empty data
     let suppliers = [], categories = [], currentEditId = null, selectedColor = '#3b82f6';
     let currentFilter = 'all', currentSearch = '';
 
@@ -520,8 +520,15 @@
         const ver = localStorage.getItem('telefoonboek_version');
         const s = localStorage.getItem('telefoonboek_suppliers');
         if (s && ver && parseInt(ver) >= DATA_VERSION) {
-            suppliers = JSON.parse(s).map(x => ({...x, category: x.category||'overig'}));
-        } else {
+            const parsed = JSON.parse(s).map(x => ({...x, category: x.category||'overig'}));
+            // If stored data has less than 10 items, assume it's from a broken first load
+            if (parsed.length >= 10) {
+                suppliers = parsed;
+                return;
+            }
+        }
+        // Default: load initial data
+        {
             suppliers = initialSuppliers;
             saveSuppliers();
             localStorage.setItem('telefoonboek_version', DATA_VERSION);
