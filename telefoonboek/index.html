@@ -499,6 +499,7 @@
         {name:'bevestigingsmiddelen'},{name:'draaien/frezen'},{name:'glas'}
     ];
 
+    const DATA_VERSION = 2;
     let suppliers = [], categories = [], currentEditId = null, selectedColor = '#3b82f6';
     let currentFilter = 'all', currentSearch = '';
 
@@ -515,7 +516,6 @@
     }
     function saveCategories() { localStorage.setItem('telefoonboek_categories', JSON.stringify(categories)); }
 
-    const DATA_VERSION = 2; // bump to force reload initial data
     function loadSuppliers() {
         const ver = localStorage.getItem('telefoonboek_version');
         const s = localStorage.getItem('telefoonboek_suppliers');
