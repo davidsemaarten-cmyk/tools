@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Contacten - Kersten Tools</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;display:flex;flex-direction:column}
+
+/* AUTH */
+#auth{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+#auth .box{background:#1e293b;border-radius:16px;padding:40px;max-width:400px;width:100%;text-align:center;box-shadow:0 25px 50px rgba(0,0,0,.4)}
+#auth .icon{font-size:48px;margin-bottom:16px}
+#auth h1{font-size:24px;margin-bottom:8px;color:#f8fafc}
+#auth p{color:#94a3b8;margin-bottom:24px;font-size:14px}
+#auth input{width:100%;padding:14px 16px;border-radius:10px;border:2px solid #334155;background:#0f172a;color:#e2e8f0;font-size:16px;outline:none}
+#auth input:focus{border-color:#3b82f6}
+#auth button{width:100%;padding:14px;border-radius:10px;border:none;background:#3b82f6;color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-top:12px}
+#auth button:hover{background:#2563eb}
+#auth .err{color:#f87171;font-size:14px;margin-top:12px;display:none}
+
+/* MAIN APP */
+#main{display:none;flex-direction:column;min-height:100vh}
+.hdr{background:#1e293b;border-bottom:1px solid #334155;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hdr a{background:none;border:1px solid #334155;color:#94a3b8;padding:8px 14px;border-radius:8px;font-size:13px;text-decoration:none}
+.hdr a:hover{border-color:#3b82f6;color:#3b82f6}
+.hdr h1{font-size:20px;font-weight:700;color:#f8fafc;flex:1}
+.search{padding:10px 14px;border-radius:8px;border:2px solid #334155;background:#0f172a;color:#e2e8f0;font-size:14px;outline:none;width:260px}
+.search:focus{border-color:#3b82f6}
+select{padding:10px 14px;border-radius:8px;border:2px solid #334155;background:#1e293b;color:#e2e8f0;font-size:13px;font-weight:600;cursor:pointer;outline:none}
+.cnt{padding:20px;flex:1}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:16px;border-left:4px solid #3b82f6}
+.card:hover{box-shadow:0 4px 12px rgba(0,0,0,.3);transform:translateY(-1px);transition:.15s}
+.card .name{font-size:15px;font-weight:700;color:#f8fafc;margin-bottom:4px}
+.card .cat{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#94a3b8;background:#334155;display:inline-block;padding:2px 8px;border-radius:8px;margin-bottom:10px}
+.card .row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #1e293b;font-size:13px}
+.card .row:last-child{border:none}
+.card .lbl{color:#64748b;font-weight:500}
+.card .val{color:#e2e8f0;font-weight:600;font-family:'Courier New',monospace;letter-spacing:.3px}
+.card .val a{color:#e2e8f0;text-decoration:none}
+.card .val a:hover{color:#3b82f6}
+.empty{text-align:center;padding:60px 20px;color:#475569;font-size:16px}
+</style>
+</head>
+<body>
+
+<div id="auth">
+  <div class="box">
+    <div class="icon">📞</div>
+    <h1>Contacten</h1>
+    <p>Kersten Tools — voer het wachtwoord in</p>
+    <form id="lf">
+      <input type="password" id="pw" placeholder="Wachtwoord" autocomplete="off" autofocus>
+      <button type="submit">Inloggen</button>
+    </form>
+    <div class="err" id="err">Verkeerd wachtwoord</div>
+  </div>
+</div>
+
+<div id="main">
+  <div class="hdr">
+    <a href="../">← Terug</a>
+    <h1>📞 Contacten</h1>
+    <input type="text" class="search" id="q" placeholder="🔍 Zoek leverancier of persoon...">
+    <select id="fil"><option value="">Alle categorieën</option></select>
+  </div>
+  <div class="cnt">
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+
+<script>
+// ── Auth ──
+const H='a6efe2e673f8187330d20181cc8ce1bb3f3aacba656b27dc4e6ac8aef0577f50';
+async function hash(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+if(localStorage.getItem('kersten_auth')===H)go();
+document.getElementById('lf').onsubmit=async e=>{e.preventDefault();if(await hash(document.getElementById('pw').value)===H){localStorage.setItem('kersten_auth',H);go()}else{const er=document.getElementById('err');er.style.display='block';document.getElementById('pw').value='';setTimeout(()=>er.style.display='none',2000)}};
+function go(){document.getElementById('auth').style.display='none';document.getElementById('main').style.display='flex';render()}
+
+// ── Data ──
+const D=[
+{n:'Waayenberg Coatings',c:'Conserveren',color:'#003D7A',t:[['Algemeen','0342 450 125'],['Maarten','06 464 718 87']]},
+{n:'Scheuter Barneveld',c:'Snijden/Kanten',color:'#00A3DD',t:[['Telefoon','0342 414 861']]},
+{n:'Coatinc',c:'Conserveren',color:'#FF8C00',t:[['Algemeen','034 241 9910'],['Rob Bijpost','06 283 881 93'],['Dick Hop','06 150 075 44'],['Robert Jan Vos','06 215 063 14']]},
+{n:'Arcelor Mittal',c:'Plaat/Profiel',color:'#FF7A3D',t:[['Ted Witte','072 567 20 31']]},
+{n:'Meulendijks',c:'Conserveren',color:'#EA7139',t:[['Algemeen','0492 524 390']]},
+{n:'Vandaglas',c:'Glas',color:'#475569',t:[['Algemeen','020 613 25 51'],['Sander Straver','06 571 331 86'],['Jeff','06 215 756 14'],['Jelle Twerda','06 230 062 51']]},
+{n:'SLO-RID',c:'Draaien/Frezen',color:'#a855f7',t:[['Algemeen','020 631 75 94']]},
+{n:'Wurth',c:'Bevestigingsmiddelen',color:'#ef4444',t:[['Shop Haven','020 337 1005']]},
+{n:'Kyocera',c:'Bevestigingsmiddelen',color:'#ef4444',t:[['Algemeen','040 24 92 401']]},
+{n:'MCB',c:'Plaat/Profiel',color:'#3b82f6',t:[['Twan de Louw','040 20 88 192']]},
+{n:'Douma',c:'Plaat/Profiel',color:'#3b82f6',t:[['Jappie Duiker','0515 226 403'],['Harmen de Jong','06 13 42 44 88']]},
+{n:'Gruter',c:'Overig',color:'#475569',t:[['Algemeen','020 494 1250']]},
+{n:'Pyroguard',c:'Glas',color:'#22c55e',t:[['Mark Van Tilborg','06 15 51 19 47'],['Algemeen','040 288 85 25']]},
+{n:'STACO',c:'Overig',color:'#475569',t:[['Algemeen','077 474 29 29']]},
+{n:'Dorma',c:'Bevestigingsmiddelen',color:'#ef4444',t:[['Jelle Jongkind','06 83 58 65 38']]},
+{n:'Bosman van Zaal',c:'Snijden/Kanten',color:'#00A3DD',t:[['Roy de Graaf','06 23 95 13 39'],['Johan van der Meer','06 13 45 86 43']]},
+{n:'Van Leeuwen Buizen',c:'Plaat/Profiel',color:'#3b82f6',t:[['Chris Taekema','078 62 52 620']]},
+{n:'Isero',c:'Bevestigingsmiddelen',color:'#ef4444',t:[['NDSM','020 723 3632']]},
+{n:'Bossard',c:'Bevestigingsmiddelen',color:'#ef4444',t:[['Edgar Griffioen','036 303 2000']]},
+{n:'Carl Stahl',c:'Overig',color:'#475569',t:[['Tim','075 303 0392']]},
+{n:'Klaassen',c:'Overig',color:'#22c55e',t:[['Joost ten Heggeler','06 34 633 383'],['Pjotr','06 83 139 141'],['Dennis Walmink','06 308 23302']]},
+{n:'Staalmeesters',c:'Overig',color:'#475569',t:[['Algemeen','0478 532050']]},
+{n:'BBTEC',c:'Bevestigingsmiddelen',color:'#ef4444',t:[['Arie Kranendonk','06 53 77 37 86']]},
+{n:'Tuwi',c:'Overig',color:'#475569',t:[['Service','+31 (0) 543-549 549']]},
+{n:'Martinic',c:'Overig',color:'#475569',t:[['Algemeen','0224 - 218 470']]}
+];
+
+// ── Render ──
+const cats=[...new Set(D.map(x=>x.c))].sort();
+function render(){
+  // Fill category filter
+  const fil=document.getElementById('fil');
+  fil.innerHTML='<option value="">Alle categorieën ('+D.length+')</option>'+cats.map(c=>'<option value="'+c+'">'+c+' ('+D.filter(x=>x.c===c).length+')</option>').join('');
+
+  applyFilter();
+}
+
+function applyFilter(){
+  const q=document.getElementById('q').value.toLowerCase();
+  const cat=document.getElementById('fil').value;
+  const grid=document.getElementById('grid');
+
+  const filtered=D.filter(x=>{
+    if(cat&&x.c!==cat)return false;
+    if(q){
+      const inName=x.n.toLowerCase().includes(q);
+      const inContact=x.t.some(r=>r[0].toLowerCase().includes(q)||r[1].includes(q));
+      if(!inName&&!inContact)return false;
+    }
+    return true;
+  });
+
+  if(!filtered.length){grid.innerHTML='<div class="empty">Geen resultaten gevonden</div>';return}
+
+  grid.innerHTML=filtered.map(x=>{
+    const tel=v=>{const d=v.replace(/[\s\-()]/g,'');return/^\+?\d{7,}$/.test(d)?'<a href="tel:'+d+'">'+v+'</a>':v};
+    return '<div class="card" style="border-left-color:'+x.color+'">'+
+      '<div class="name">'+x.n+'</div>'+
+      '<div class="cat">'+x.c+'</div>'+
+      x.t.map(r=>'<div class="row"><span class="lbl">'+r[0]+'</span><span class="val">'+tel(r[1])+'</span></div>').join('')+
+    '</div>';
+  }).join('');
+}
+
+document.getElementById('q').addEventListener('input',applyFilter);
+document.getElementById('fil').addEventListener('change',applyFilter);
+</script>
+</body>
+</html>
