@@ -23,27 +23,69 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 #auth button:hover{background:#2563eb}
 #auth .err{color:#f87171;font-size:14px;margin-top:12px;display:none}
 
-/* MAIN APP */
+/* MAIN */
 #main{display:none;flex-direction:column;min-height:100vh}
-.hdr{background:#1e293b;border-bottom:1px solid #334155;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.hdr a{background:none;border:1px solid #334155;color:#94a3b8;padding:8px 14px;border-radius:8px;font-size:13px;text-decoration:none}
+
+/* Header */
+.hdr{background:#1e293b;border-bottom:1px solid #334155;padding:12px 20px;display:flex;align-items:center;gap:12px}
+.hdr a{background:none;border:1px solid #334155;color:#94a3b8;padding:8px 14px;border-radius:8px;font-size:13px;text-decoration:none;flex-shrink:0}
 .hdr a:hover{border-color:#3b82f6;color:#3b82f6}
-.hdr h1{font-size:20px;font-weight:700;color:#f8fafc;flex:1}
-.search{padding:10px 14px;border-radius:8px;border:2px solid #334155;background:#0f172a;color:#e2e8f0;font-size:14px;outline:none;width:260px}
-.search:focus{border-color:#3b82f6}
-select{padding:10px 14px;border-radius:8px;border:2px solid #334155;background:#1e293b;color:#e2e8f0;font-size:13px;font-weight:600;cursor:pointer;outline:none}
-.cnt{padding:20px;flex:1}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-.card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:16px;border-left:4px solid #3b82f6}
-.card:hover{box-shadow:0 4px 12px rgba(0,0,0,.3);transform:translateY(-1px);transition:.15s}
-.card .name{font-size:15px;font-weight:700;color:#f8fafc;margin-bottom:4px}
-.card .cat{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#94a3b8;background:#334155;display:inline-block;padding:2px 8px;border-radius:8px;margin-bottom:10px}
-.card .row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #1e293b;font-size:13px}
-.card .row:last-child{border:none}
+.hdr h1{font-size:18px;font-weight:700;color:#f8fafc;white-space:nowrap}
+
+/* Search bar */
+.search-wrap{padding:16px 20px;background:#1e293b;border-bottom:1px solid #334155}
+.search-inner{max-width:800px;margin:0 auto;position:relative}
+.search-inner .icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:20px;color:#64748b;pointer-events:none}
+.search{width:100%;padding:16px 16px 16px 48px;border-radius:12px;border:2px solid #334155;background:#0f172a;color:#e2e8f0;font-size:16px;outline:none;transition:border-color .2s}
+.search:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.search::placeholder{color:#475569}
+
+/* Controls bar */
+.controls{padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+select{padding:8px 12px;border-radius:8px;border:2px solid #334155;background:#1e293b;color:#e2e8f0;font-size:13px;font-weight:600;cursor:pointer;outline:none}
+select:focus{border-color:#3b82f6}
+.view-btns{display:flex;gap:2px;margin-left:auto}
+.vb{background:#1e293b;border:1px solid #334155;color:#64748b;padding:7px 12px;cursor:pointer;font-size:14px;transition:.15s}
+.vb:first-child{border-radius:8px 0 0 8px}
+.vb:last-child{border-radius:0 8px 8px 0}
+.vb.active{background:#334155;color:#e2e8f0;border-color:#475569}
+.vb:hover:not(.active){color:#94a3b8}
+.count{color:#64748b;font-size:12px;white-space:nowrap}
+
+/* Content */
+.cnt{padding:16px 20px;flex:1}
+
+/* Cards view */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.card{background:#1e293b;border:1px solid #334155;border-radius:10px;overflow:hidden;border-left:4px solid #3b82f6}
+.card:hover{box-shadow:0 4px 12px rgba(0,0,0,.3);transition:.15s}
+.card .top{padding:14px 16px 10px}
+.card .name{font-size:15px;font-weight:700;color:#f8fafc;margin-bottom:3px}
+.card .cat{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#94a3b8;background:#334155;display:inline-block;padding:2px 8px;border-radius:8px}
+.card .rows{}
+.card .r{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;font-size:13px}
+.card .r:nth-child(odd){background:rgba(255,255,255,.02)}
+.card .r:nth-child(even){background:rgba(255,255,255,.05)}
 .card .lbl{color:#64748b;font-weight:500}
 .card .val{color:#e2e8f0;font-weight:600;font-family:'Courier New',monospace;letter-spacing:.3px}
 .card .val a{color:#e2e8f0;text-decoration:none}
 .card .val a:hover{color:#3b82f6}
+
+/* List view */
+.list-view{display:none}
+.list-view table{width:100%;border-collapse:collapse}
+.list-view th{text-align:left;padding:10px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#64748b;border-bottom:2px solid #334155;background:#1e293b;position:sticky;top:0}
+.list-view td{padding:10px 14px;font-size:13px;border-bottom:1px solid #1e293b}
+.list-view tr:nth-child(odd) td{background:rgba(255,255,255,.02)}
+.list-view tr:nth-child(even) td{background:rgba(255,255,255,.04)}
+.list-view tr:hover td{background:rgba(59,130,246,.08)}
+.list-view .ln{font-weight:700;color:#f8fafc}
+.list-view .lc{color:#94a3b8;font-size:12px}
+.list-view .lp{color:#64748b;font-size:12px}
+.list-view .lt{font-family:'Courier New',monospace;font-weight:600;letter-spacing:.3px}
+.list-view .lt a{color:#e2e8f0;text-decoration:none}
+.list-view .lt a:hover{color:#3b82f6}
+
 .empty{text-align:center;padding:60px 20px;color:#475569;font-size:16px}
 </style>
 </head>
@@ -66,11 +108,26 @@ select{padding:10px 14px;border-radius:8px;border:2px solid #334155;background:#
   <div class="hdr">
     <a href="../">← Terug</a>
     <h1>📞 Contacten</h1>
-    <input type="text" class="search" id="q" placeholder="🔍 Zoek leverancier of persoon...">
+  </div>
+  <div class="search-wrap">
+    <div class="search-inner">
+      <span class="icon">🔍</span>
+      <input type="text" class="search" id="q" placeholder="Zoek op leverancier, persoon of nummer..." autofocus>
+    </div>
+  </div>
+  <div class="controls">
     <select id="fil"><option value="">Alle categorieën</option></select>
+    <span class="count" id="count"></span>
+    <div class="view-btns">
+      <button class="vb active" id="vCards" onclick="setView('cards')" title="Kaarten">▦</button>
+      <button class="vb" id="vList" onclick="setView('list')" title="Lijst">☰</button>
+    </div>
   </div>
   <div class="cnt">
     <div class="grid" id="grid"></div>
+    <div class="list-view" id="listView">
+      <table><thead><tr><th>Bedrijf</th><th>Categorie</th><th>Contactpersoon</th><th>Telefoon</th></tr></thead><tbody id="tbody"></tbody></table>
+    </div>
   </div>
 </div>
 
@@ -78,10 +135,8 @@ select{padding:10px 14px;border-radius:8px;border:2px solid #334155;background:#
 // ── Auth ──
 const H='a6efe2e673f8187330d20181cc8ce1bb3f3aacba656b27dc4e6ac8aef0577f50';
 async function hash(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
-// auto-login moved to end of script
 document.getElementById('lf').onsubmit=async e=>{e.preventDefault();if(await hash(document.getElementById('pw').value)===H){localStorage.setItem('kersten_auth',H);go()}else{const er=document.getElementById('err');er.style.display='block';document.getElementById('pw').value='';setTimeout(()=>er.style.display='none',2000)}};
-
-function go(){document.getElementById('auth').style.display='none';document.getElementById('main').style.display='flex';render()}
+function go(){document.getElementById('auth').style.display='none';document.getElementById('main').style.display='flex';init()}
 
 // ── Data ──
 const D=[
@@ -112,47 +167,69 @@ const D=[
 {n:'Martinic',c:'Overig',color:'#475569',t:[['Algemeen','0224 - 218 470']]}
 ];
 
-// ── Render ──
-const cats=[...new Set(D.map(x=>x.c))].sort();
-function render(){
-  // Fill category filter
-  const fil=document.getElementById('fil');
-  fil.innerHTML='<option value="">Alle categorieën ('+D.length+')</option>'+cats.map(c=>'<option value="'+c+'">'+c+' ('+D.filter(x=>x.c===c).length+')</option>').join('');
+// ── View state ──
+let view=localStorage.getItem('contacten_view')||'cards';
 
+function setView(v){
+  view=v;
+  localStorage.setItem('contacten_view',v);
+  document.getElementById('vCards').classList.toggle('active',v==='cards');
+  document.getElementById('vList').classList.toggle('active',v==='list');
+  document.getElementById('grid').style.display=v==='cards'?'grid':'none';
+  document.getElementById('listView').style.display=v==='list'?'block':'none';
   applyFilter();
+}
+
+function tel(v){const d=v.replace(/[\s\-()]/g,'');return/^\+?\d{7,}$/.test(d)?`<a href="tel:${d}">${v}</a>`:v}
+
+function init(){
+  const cats=[...new Set(D.map(x=>x.c))].sort();
+  document.getElementById('fil').innerHTML='<option value="">Alle categorieën ('+D.length+')</option>'+cats.map(c=>'<option value="'+c+'">'+c+' ('+D.filter(x=>x.c===c).length+')</option>').join('');
+  setView(view);
 }
 
 function applyFilter(){
   const q=document.getElementById('q').value.toLowerCase();
   const cat=document.getElementById('fil').value;
-  const grid=document.getElementById('grid');
 
-  const filtered=D.filter(x=>{
+  const f=D.filter(x=>{
     if(cat&&x.c!==cat)return false;
     if(q){
-      const inName=x.n.toLowerCase().includes(q);
-      const inContact=x.t.some(r=>r[0].toLowerCase().includes(q)||r[1].includes(q));
-      if(!inName&&!inContact)return false;
+      const inN=x.n.toLowerCase().includes(q);
+      const inT=x.t.some(r=>r[0].toLowerCase().includes(q)||r[1].includes(q));
+      if(!inN&&!inT)return false;
     }
     return true;
   });
 
-  if(!filtered.length){grid.innerHTML='<div class="empty">Geen resultaten gevonden</div>';return}
+  document.getElementById('count').textContent=f.length+' van '+D.length;
 
-  grid.innerHTML=filtered.map(x=>{
-    const tel=v=>{const d=v.replace(/[\s\-()]/g,'');return/^\+?\d{7,}$/.test(d)?'<a href="tel:'+d+'">'+v+'</a>':v};
-    return '<div class="card" style="border-left-color:'+x.color+'">'+
-      '<div class="name">'+x.n+'</div>'+
-      '<div class="cat">'+x.c+'</div>'+
-      x.t.map(r=>'<div class="row"><span class="lbl">'+r[0]+'</span><span class="val">'+tel(r[1])+'</span></div>').join('')+
-    '</div>';
-  }).join('');
+  // Cards
+  const grid=document.getElementById('grid');
+  if(!f.length){grid.innerHTML='<div class="empty">Geen resultaten</div>';document.getElementById('tbody').innerHTML='';return}
+
+  grid.innerHTML=f.map(x=>
+    '<div class="card" style="border-left-color:'+x.color+'">'+
+      '<div class="top"><div class="name">'+x.n+'</div><div class="cat">'+x.c+'</div></div>'+
+      '<div class="rows">'+x.t.map(r=>'<div class="r"><span class="lbl">'+r[0]+'</span><span class="val">'+tel(r[1])+'</span></div>').join('')+'</div>'+
+    '</div>'
+  ).join('');
+
+  // List
+  document.getElementById('tbody').innerHTML=f.flatMap(x=>
+    x.t.map((r,i)=>
+      '<tr>'+
+        (i===0?`<td class="ln" rowspan="${x.t.length}">${x.n}</td><td class="lc" rowspan="${x.t.length}">${x.c}</td>`:'') +
+        '<td class="lp">'+r[0]+'</td><td class="lt">'+tel(r[1])+'</td>'+
+      '</tr>'
+    )
+  ).join('');
 }
 
 document.getElementById('q').addEventListener('input',applyFilter);
 document.getElementById('fil').addEventListener('change',applyFilter);
 
-// Auto-login if already authenticated (must be AFTER D and render are defined)
+// Auto-login
 if(localStorage.getItem('kersten_auth')===H)go();
 </script>
 </body>
