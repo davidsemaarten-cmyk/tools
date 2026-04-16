@@ -78,8 +78,9 @@ select{padding:10px 14px;border-radius:8px;border:2px solid #334155;background:#
 // ── Auth ──
 const H='a6efe2e673f8187330d20181cc8ce1bb3f3aacba656b27dc4e6ac8aef0577f50';
 async function hash(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
-if(localStorage.getItem('kersten_auth')===H)go();
+// auto-login moved to end of script
 document.getElementById('lf').onsubmit=async e=>{e.preventDefault();if(await hash(document.getElementById('pw').value)===H){localStorage.setItem('kersten_auth',H);go()}else{const er=document.getElementById('err');er.style.display='block';document.getElementById('pw').value='';setTimeout(()=>er.style.display='none',2000)}};
+
 function go(){document.getElementById('auth').style.display='none';document.getElementById('main').style.display='flex';render()}
 
 // ── Data ──
@@ -150,6 +151,9 @@ function applyFilter(){
 
 document.getElementById('q').addEventListener('input',applyFilter);
 document.getElementById('fil').addEventListener('change',applyFilter);
+
+// Auto-login if already authenticated (must be AFTER D and render are defined)
+if(localStorage.getItem('kersten_auth')===H)go();
 </script>
 </body>
 </html>
