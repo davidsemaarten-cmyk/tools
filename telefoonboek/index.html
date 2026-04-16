@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Telefoonboek - Kersten Tools</title>
-    <script>/* auto-bust v3 */if(!location.search.includes('v=3')){location.replace(location.pathname+'?v=3')}</script>
+    <script>const KV='kersten_cv';const CV='3';if(localStorage.getItem(KV)!==CV){caches.keys().then(k=>Promise.all(k.map(c=>caches.delete(c))));localStorage.setItem(KV,CV);location.reload(true)}</script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -313,7 +313,7 @@
 <div class="app" id="app">
     <div class="top-header">
         <div class="header-left">
-            <a href="../" class="back-btn">← Terug</a>
+            <a href="../?v=3" class="back-btn">← Terug</a>
             <span class="header-title">📞 Telefoonboek</span>
         </div>
         <div class="date-info" id="dateInfo"></div>
